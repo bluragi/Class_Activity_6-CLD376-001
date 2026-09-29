@@ -1,0 +1,45 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  registration-service:
+    build: ./registration
+    container_name: registration_container
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - MONGO_URI=mongodb+srv://channatalie005_db_user:natalie123@cluster0.cs6zg3l.mongodb.net/aupp2026cn?appName=Cluster0
+      - JWT_SECRETE=nat123
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  authentication-service:
+    build: ./authentication
+    container_name: authentication_container
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - MONGO_URI=mongodb+srv://channatalie005_db_user:natalie123@cluster0.cs6zg3l.mongodb.net/aupp2026cn?appName=Cluster0
+      - JWT_SECRETE=nat123
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
